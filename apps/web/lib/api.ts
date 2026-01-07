@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface QueryOptions {
   top_k?: number;
-  llm_provider?: 'ollama' | 'openai';
+  llm_provider?: 'ollama' | 'openai' | 'groq';
   embedding_provider?: 'local' | 'openai';
 }
 
