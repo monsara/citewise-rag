@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # PostgreSQL - реляційна БД для метаданих
+  postgres:
+    image: postgres:16-alpine
+    container_name: citewise-postgres
+    environment:
+      POSTGRES_DB: citewise
+      POSTGRES_USER: citewise
+      POSTGRES_PASSWORD: citewise_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citewise"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Weaviate - векторна БД для RAG
+  weaviate:
+    image: semitechnologies/weaviate:1.28.0
+    container_name: citewise-weaviate
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 20
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/.well-known/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - не потрібен для MVP v0.1
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: citewise-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # Neo4j - графова БД (для GraphRAG, пізніше)
+  # Закоментовано для MVP
+  # neo4j:
+  #   image: neo4j:5.15-community
+  #   container_name: citewise-neo4j
+  #   ports:
+  #     - "7474:7474"  # HTTP
+  #     - "7687:7687"  # Bolt
+  #   environment:
+  #     NEO4J_AUTH: neo4j/citewise_dev_password
+  #     NEO4J_PLUGINS: '["apoc", "graph-data-science"]'
+  #   volumes:
+  #     - neo4j_data:/data
+  #     - neo4j_logs:/logs
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:7474"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+volumes:
+  postgres_data:
+  weaviate_data:
+  # redis_data:
+  # neo4j_data:
+  # neo4j_logs:
+
+networks:
+  default:
+    name: citewise-network
