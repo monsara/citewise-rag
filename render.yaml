@@ -1,0 +1,83 @@
+databases:
+  # PostgreSQL Database
+  - name: citewise-postgres
+    databaseName: citewise
+    user: citewise
+    plan: free
+
+services:
+  # Weaviate Vector Database (as Web Service with Docker)
+  - type: web
+    name: citewise-weaviate
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.weaviate
+    dockerContext: .
+    envVars:
+      - key: QUERY_DEFAULTS_LIMIT
+        value: "20"
+      - key: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+        value: "true"
+      - key: PERSISTENCE_DATA_PATH
+        value: /var/lib/weaviate
+      - key: DEFAULT_VECTORIZER_MODULE
+        value: none
+      - key: CLUSTER_HOSTNAME
+        value: node1
+      - key: PORT
+        value: "8080"
+    disk:
+      name: weaviate-data
+      mountPath: /var/lib/weaviate
+      sizeGB: 1
+
+  # FastAPI Backend
+  - type: web
+    name: citewise-api
+    env: python
+    plan: free
+    buildCommand: cd apps/ml && pip install -r requirements.txt
+    startCommand: cd apps/ml && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: EMBEDDING_PROVIDER
+        value: local
+      - key: LOCAL_EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
+      - key: WEAVIATE_URL
+        fromService:
+          type: web
+          name: citewise-weaviate
+          envVarKey: PORT
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: citewise-postgres
+          property: connectionString
+      - key: DEFAULT_TOP_K
+        value: "5"
+      - key: CHUNK_SIZE
+        value: "1000"
+      - key: CHUNK_OVERLAP
+        value: "200"
+      - key: MAX_CHUNKS_PER_DOCUMENT
+        value: "3"
+    healthCheckPath: /health
+
+  # Next.js Frontend
+  - type: web
+    name: citewise-web
+    env: node
+    plan: free
+    buildCommand: cd apps/web && npm install && npm run build
+    startCommand: cd apps/web && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: citewise-api
+          envVarKey: PORT

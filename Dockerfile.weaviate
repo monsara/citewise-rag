@@ -1,0 +1,7 @@
+FROM semitechnologies/weaviate:1.28.0
+
+# Expose both HTTP and gRPC ports
+EXPOSE 8080 50051
+
+# Use environment variables from Render
+CMD ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
