@@ -1,40 +1,15 @@
 databases:
-  # PostgreSQL Database
+  # PostgreSQL Database (Free Tier)
   - name: citewise-postgres
     databaseName: citewise
     user: citewise
     plan: free
 
 services:
-  # Weaviate Vector Database (as Web Service with Docker)
-  - type: web
-    name: citewise-weaviate
-    env: docker
-    plan: free
-    dockerfilePath: ./Dockerfile.weaviate
-    dockerContext: .
-    envVars:
-      - key: QUERY_DEFAULTS_LIMIT
-        value: "20"
-      - key: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
-        value: "true"
-      - key: PERSISTENCE_DATA_PATH
-        value: /var/lib/weaviate
-      - key: DEFAULT_VECTORIZER_MODULE
-        value: none
-      - key: CLUSTER_HOSTNAME
-        value: node1
-      - key: PORT
-        value: "8080"
-    disk:
-      name: weaviate-data
-      mountPath: /var/lib/weaviate
-      sizeGB: 1
-
   # FastAPI Backend
   - type: web
     name: citewise-api
-    env: python
+    runtime: python
     plan: free
     buildCommand: cd apps/ml && pip install -r requirements.txt
     startCommand: cd apps/ml && uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -50,10 +25,7 @@ services:
       - key: LOCAL_EMBEDDING_MODEL
         value: all-MiniLM-L6-v2
       - key: WEAVIATE_URL
-        fromService:
-          type: web
-          name: citewise-weaviate
-          envVarKey: PORT
+        value: http://citewise-weaviate:8080
       - key: POSTGRES_URL
         fromDatabase:
           name: citewise-postgres
@@ -68,10 +40,31 @@ services:
         value: "3"
     healthCheckPath: /health
 
+  # Weaviate Vector Database (as Background Worker - no disk needed)
+  - type: web
+    name: citewise-weaviate
+    runtime: image
+    plan: free
+    image:
+      url: semitechnologies/weaviate:1.28.0
+    envVars:
+      - key: QUERY_DEFAULTS_LIMIT
+        value: "20"
+      - key: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+        value: "true"
+      - key: PERSISTENCE_DATA_PATH
+        value: /tmp/weaviate
+      - key: DEFAULT_VECTORIZER_MODULE
+        value: none
+      - key: CLUSTER_HOSTNAME
+        value: node1
+      - key: PORT
+        value: "8080"
+
   # Next.js Frontend
   - type: web
     name: citewise-web
-    env: node
+    runtime: node
     plan: free
     buildCommand: cd apps/web && npm install && npm run build
     startCommand: cd apps/web && npm start
@@ -80,4 +73,4 @@ services:
         fromService:
           type: web
           name: citewise-api
-          envVarKey: PORT
+          property: host
