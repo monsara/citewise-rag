@@ -6,9 +6,29 @@ A minimal RAG (Retrieval-Augmented Generation) system optimized for **learning a
 
 ## 🌐 Live Demo
 
-**Try it now:** [citewise-web.onrender.com](https://citewise-web.onrender.com)
+⚠️ **Note**: Live demo temporarily unavailable due to free tier memory limitations.
 
-⚠️ **Note**: Free tier sleeps after 15 min of inactivity. First request may take 30-60 seconds to wake up.
+**Instead, clone and run locally** - it's easy and works great! See [Quick Start](#-quick-start) below.
+
+## 📸 Screenshots
+
+### Chat Interface
+
+Ask questions and get answers with source citations:
+
+![Chat Interface](docs/screenshots/chat.png)
+
+### Document Management
+
+Upload and manage your knowledge base:
+
+![Document Management](docs/screenshots/documents.png)
+
+### Query Traces
+
+Debug and learn how RAG works under the hood:
+
+![Query Traces](docs/screenshots/traces.png)
 
 ## 🎯 Learning Goals
 
@@ -188,21 +208,6 @@ Open http://localhost:3000
 - **v0.3**: Introduce GraphRAG with Neo4j
 - **v0.4**: Multi-user, authentication
 - **v0.5**: Production optimizations
-
----
-
-## 🚀 Deployment
-
-**Live Demo**: [citewise-web.onrender.com](https://citewise-web.onrender.com)
-
-This project is deployed on **Render** (free tier):
-
-- Frontend: Next.js on Render Web Service
-- Backend: FastAPI on Render Web Service
-- Database: PostgreSQL (Render managed)
-- Vector DB: Weaviate (Docker on Render)
-
-**Want to deploy your own?** See [RENDER_DEPLOY.md](docs/active/RENDER_DEPLOY.md) for step-by-step instructions.
 
 ---
 
