@@ -15,6 +15,7 @@ from services.retriever import retriever
 from services.generator import generator
 from utils import tracing
 from database import postgres
+from db_init import init_database
 
 # Configure logging
 logging.basicConfig(
@@ -22,6 +23,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Initialize database on startup
+logger.info("Initializing database...")
+init_database()
 
 # Create FastAPI app
 app = FastAPI(
