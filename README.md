@@ -4,6 +4,12 @@ A minimal RAG (Retrieval-Augmented Generation) system optimized for **learning a
 
 > **Philosophy**: Learning > Features | Clarity > Abstraction | Control > Automation
 
+## 🌐 Live Demo
+
+**Try it now:** [citewise-web.onrender.com](https://citewise-web.onrender.com)
+
+⚠️ **Note**: Free tier sleeps after 15 min of inactivity. First request may take 30-60 seconds to wake up.
+
 ## 🎯 Learning Goals
 
 Understand the complete RAG pipeline:
@@ -154,16 +160,17 @@ Open http://localhost:3000
 - ✅ **Free tier** - no credit card required
 - ✅ **Fast inference** - faster than OpenAI
 - ✅ **Large models** - Llama 3.1 70B, Mixtral 8x7B
-- ✅ **Works for deployment** - perfect for Vercel/Railway
+- ✅ **Works for deployment** - perfect for Render/Vercel/Railway
 - ✅ **No local setup** - just API key
 
 ## 📚 Documentation
 
 ### User Guides
 
-- **[USER_GUIDE.md](docs/active/USER_GUIDE.md)** - Complete interface guide with screenshots
+- **[USER_GUIDE.md](docs/active/USER_GUIDE.md)** - Complete interface guide
 - **[GROQ_SETUP.md](docs/active/GROQ_SETUP.md)** - How to get free Groq API key
 - **[QUICKSTART.md](docs/active/QUICKSTART.md)** - Quick setup instructions
+- **[RENDER_DEPLOY.md](docs/active/RENDER_DEPLOY.md)** - Deploy to Render (free hosting)
 
 ### Architecture
 
@@ -184,7 +191,19 @@ Open http://localhost:3000
 
 ---
 
-**Note**: This is a learning project. Production deployment is explicitly out of scope for v0.1.
+## 🚀 Deployment
+
+**Live Demo**: [citewise-web.onrender.com](https://citewise-web.onrender.com)
+
+This project is deployed on **Render** (free tier):
+- Frontend: Next.js on Render Web Service
+- Backend: FastAPI on Render Web Service  
+- Database: PostgreSQL (Render managed)
+- Vector DB: Weaviate (Docker on Render)
+
+**Want to deploy your own?** See [RENDER_DEPLOY.md](docs/active/RENDER_DEPLOY.md) for step-by-step instructions.
+
+---
 
 ## 📖 Related Projects
 
