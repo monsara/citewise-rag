@@ -196,8 +196,9 @@ Open http://localhost:3000
 **Live Demo**: [citewise-web.onrender.com](https://citewise-web.onrender.com)
 
 This project is deployed on **Render** (free tier):
+
 - Frontend: Next.js on Render Web Service
-- Backend: FastAPI on Render Web Service  
+- Backend: FastAPI on Render Web Service
 - Database: PostgreSQL (Render managed)
 - Vector DB: Weaviate (Docker on Render)
 
